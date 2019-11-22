@@ -38,9 +38,7 @@ test-suite tests
                     , text
                     , validation
                     , attoparsec
+                    , abc-header-parser
                     , hspec
  default-language:    Haskell2010
- other-modules:       Data.Abc
-                    , Data.Abc.Parser
-                    , Data.Abc.Validator
-                    , Data.Genre
+ 
