@@ -1,0 +1,46 @@
+name:                abc-header-parser
+version:             0.1.0.0
+synopsis:            Tiny ABC notation header parser
+description:         Parse header content as to allow pattern-matching
+homepage:            https://github.com/githubuser/abc-header-parser#readme
+license:             BSD3
+license-file:        LICENSE
+author:              John Watson
+maintainer:          john.watson@gmx.co.uk
+copyright:           2019 John Watson
+category:            Web
+build-type:          Simple
+cabal-version:       >=1.10
+extra-source-files:  README.md
+
+library
+  ghc-options:         -Wall
+  hs-source-dirs:      src
+  default-language:    Haskell2010
+  build-depends:       base >= 4.7 && < 5
+                     , containers
+                     , text
+                     , validation
+                     , attoparsec
+  exposed-modules:     Data.Abc
+                     , Data.Abc.Parser
+                     , Data.Abc.Validator
+                     , Data.Genre
+
+test-suite tests
+ ghc-options:         -Wall
+ type:                exitcode-stdio-1.0
+ main-is:             Tests.hs
+ hs-source-dirs:      tests
+                    , src
+ build-depends:       base >= 4.7 && < 5
+                    , containers
+                    , text
+                    , validation
+                    , attoparsec
+                    , hspec
+ default-language:    Haskell2010
+ other-modules:       Data.Abc
+                    , Data.Abc.Parser
+                    , Data.Abc.Validator
+                    , Data.Genre
