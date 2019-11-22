@@ -1,8 +1,8 @@
 name:                abc-header-parser
 version:             0.1.0.0
 synopsis:            Tiny ABC notation header parser
-description:         Parse header content as to allow pattern-matching
-homepage:            https://github.com/githubuser/abc-header-parser#readme
+description:         Parse header content so as to allow pattern-matching
+homepage:            https://github.com/newlandsvalley/abc-header-parser#readme
 license:             BSD3
 license-file:        LICENSE
 author:              John Watson

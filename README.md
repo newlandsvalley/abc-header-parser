@@ -1,4 +1,4 @@
-# AbcHeaderParser
+# abc-header-parser
 
 EXPERIMENTAL - this is my first encounter with Stack and Cabal
 
