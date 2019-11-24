@@ -26,8 +26,14 @@ import Data.Genre
 
 
 -- Datatype for validated headers
-data ValidatedHeaders = ValidatedHeaders Text Text Text Text
-  deriving (Eq, Show)
+data ValidatedHeaders =
+  ValidatedHeaders
+    { title  :: Text
+    , ref    :: Text
+    , key    :: Text
+    , rhythm :: Text
+    }
+    deriving (Eq, Show)
 
 buildHeaderMap :: Headers -> HeaderMap
 buildHeaderMap =
