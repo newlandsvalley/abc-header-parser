@@ -1,7 +1,7 @@
 {-# LANGUAGE NamedFieldPuns #-}
 
 module Data.Abc.Validator
-  ( ValidatedHeaders
+  ( ValidatedHeaders(..)
   , buildHeaderMap
   , validateHeaders
   , validateTitle
