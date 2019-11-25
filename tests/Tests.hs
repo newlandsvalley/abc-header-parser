@@ -7,6 +7,7 @@ import Data.Genre
 import Data.Abc.Validator (ValidatedHeaders, buildHeaderMap, validateHeaders
                           , normaliseKeySignature)
 import Data.Abc.Parser (abcParse, headersParse)
+import Data.GenreParser (genreParse)
 import Data.Text (pack)
 import Data.List (length)
 import Data.Bifunctor (second)
@@ -51,6 +52,14 @@ main = hspec $ do
       let
         result = headersParse (pack badAbc)
       (isLeft result) `shouldBe` True
+
+
+  describe "The genre parser" $ do
+    it "accepts valid genres" $ do
+      (genreParse "scandi") `shouldBe` (Right Scandi)
+    it "rejects invalid genres" $ do
+      (genreParse "foo") `shouldBe` (Left "unknown genre foo")
+
 
   describe "The validator" $ do
     it "accepts correct headers" $ do
