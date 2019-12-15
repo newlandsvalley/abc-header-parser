@@ -6,6 +6,7 @@ import Data.Abc
 import Data.Genre
 import Data.Abc.Validator (ValidatedHeaders, buildHeaderMap, validateHeaders
                           , normaliseKeySignature)
+import Data.Abc.Serializer (serializeHeaders)
 import Data.Abc.Parser (abcParse, headersParse)
 import Data.GenreParser (genreParse)
 import Data.Text (pack)
@@ -35,7 +36,7 @@ main = hspec $ do
       let
         result :: Either String Int
         result = second countAbcHeaders $ abcParse (pack augustsson)
-      result `shouldBe` (Right 9)
+      result `shouldBe` (Right 10)
     it "rejects completely invalid ABC" $ do
       let
         result = abcParse (pack badAbc)
@@ -47,7 +48,7 @@ main = hspec $ do
       let
         result :: Either String Int
         result = second countHeaders $ headersParse (pack augustsson)
-      result `shouldBe` (Right 9)
+      result `shouldBe` (Right 10)
     it "rejects completely invalid ABC" $ do
       let
         result = headersParse (pack badAbc)
@@ -103,6 +104,16 @@ main = hspec $ do
     it "leaves other key formats unchanged - albeit capitalised differently" $ do
       (normaliseKeySignature "gFoo") `shouldBe` "Gfoo"
 
+  describe "The serializer" $ do
+    it "reconstructs the parsed ABC" $ do
+      let
+        result :: Either String Abc
+        result = abcParse (pack augustsson)
+      case result of
+        Left _ ->
+          expectationFailure "unexpected parse error"
+        Right abc ->
+          (serializeHeaders $ headers abc) <> (body abc) `shouldBe` (pack augustsson)
 
 badAbc :: String
 badAbc =
@@ -119,6 +130,7 @@ augustsson =
   <> "Z:John Watson 24/01/2015\r\n"
   <> "L:1/8\r\n"
   <> "K:A\r\n"
+  <> "x:unsupported header\r\n"
   <> "A>c|: e2f2 efed | c2a2 e3d | cedc BdcB | Aced cBAc |\r\n"
   <> "e2f2 efed | c2a2 e3d | cedc BdcB | A4 A>AA>B :|\r\n"
   <> "|: e2e2 e2de | f2ed B3c | d3c d2cd | e3d cdBc |\r\n"

@@ -277,7 +277,7 @@ comment =
 unsupportedHeader :: Parser HeaderName
 unsupportedHeader =
   UnsupportedHeader
-    <$ unsupportedHeaderCode
+    <$> unsupportedHeaderCode
     <?> "unsupportedHeader"
 
 

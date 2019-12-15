@@ -47,7 +47,7 @@ data HeaderName
   | Transcription
   | FieldContinuation
   | Comment
-  | UnsupportedHeader
+  | UnsupportedHeader Char
     deriving (Eq, Ord, Show)
 
 -- | A Mode.

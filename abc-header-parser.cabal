@@ -24,6 +24,7 @@ library
                      , attoparsec
   exposed-modules:     Data.Abc
                      , Data.Abc.Parser
+                     , Data.Abc.Serializer
                      , Data.Abc.Validator
                      , Data.Genre
                      , Data.GenreParser
