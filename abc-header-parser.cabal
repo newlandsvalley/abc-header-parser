@@ -1,45 +1,65 @@
-name:                abc-header-parser
-version:             0.1.0.0
-synopsis:            Tiny ABC notation header parser
-description:         Parse header content so as to allow pattern-matching
-homepage:            https://github.com/newlandsvalley/abc-header-parser#readme
-license:             BSD3
-license-file:        LICENSE
-author:              John Watson
-maintainer:          john.watson@gmx.co.uk
-copyright:           2019 John Watson
-category:            Web
-build-type:          Simple
-cabal-version:       >=1.10
-extra-source-files:  README.md
+cabal-version: 1.12
+
+-- This file has been generated from package.yaml by hpack version 0.31.2.
+--
+-- see: https://github.com/sol/hpack
+--
+-- hash: c7ec5e57d049dbbc017724c30e1f292ec58b3c6d04f39cc0c9621ce783744fd7
+
+name:           abc-header-parser
+version:        0.1.0.0
+synopsis:       Tiny ABC notation header parser
+description:    Please see the README on GitHub at <https://github.com/newlandsvalley/abc-header-parser#readme>
+homepage:       https://github.com/githubuser/abc-header-parser#readme
+bug-reports:    https://github.com/githubuser/abc-header-parser/issues
+author:         John Watson
+maintainer:     john.watson@gmx.co.uk
+copyright:      2020 John Watson
+license:        BSD3
+license-file:   LICENSE
+build-type:     Simple
+extra-source-files:
+    README.md
+    ChangeLog.md
+
+source-repository head
+  type: git
+  location: https://github.com/githubuser/abc-header-parser
 
 library
-  ghc-options:         -Wall
-  hs-source-dirs:      src
-  default-language:    Haskell2010
-  build-depends:       base >= 4.7 && < 5
-                     , containers
-                     , text
-                     , validation
-                     , attoparsec
-  exposed-modules:     Data.Abc
-                     , Data.Abc.Parser
-                     , Data.Abc.Serializer
-                     , Data.Abc.Validator
-                     , Data.Genre
-                     , Data.GenreParser
+  exposed-modules:
+      Data.Abc
+      Data.Abc.Parser
+      Data.Abc.Serializer
+      Data.Abc.Validator
+      Data.Genre
+      Data.GenreParser
+  other-modules:
+      Paths_abc_header_parser
+  hs-source-dirs:
+      src
+  build-depends:
+      attoparsec
+    , base >=4.7 && <5
+    , containers
+    , text
+    , validation
+  default-language: Haskell2010
 
-test-suite tests
- ghc-options:         -Wall
- type:                exitcode-stdio-1.0
- main-is:             Tests.hs
- hs-source-dirs:      tests
-                    , src
- build-depends:       base >= 4.7 && < 5
-                    , containers
-                    , text
-                    , validation
-                    , attoparsec
-                    , abc-header-parser
-                    , hspec
- default-language:    Haskell2010
+test-suite postgres-test-test
+  type: exitcode-stdio-1.0
+  main-is: Tests.hs
+  other-modules:
+      Paths_abc_header_parser
+  hs-source-dirs:
+      tests
+  ghc-options: -threaded -rtsopts -with-rtsopts=-N
+  build-depends:
+      abc-header-parser
+    , attoparsec
+    , base >=4.7 && <5
+    , containers
+    , hspec
+    , text
+    , validation
+  default-language: Haskell2010

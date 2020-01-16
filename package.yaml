@@ -1,0 +1,43 @@
+name:                abc-header-parser
+version:             0.1.0.0
+synopsis:            Tiny ABC notation header parser
+github:              "githubuser/abc-header-parser"
+license:             BSD3
+author:              "John Watson"
+maintainer:          "john.watson@gmx.co.uk"
+copyright:           "2020 John Watson"
+
+extra-source-files:
+- README.md
+- ChangeLog.md
+
+# Metadata used when publishing your package
+# synopsis:            Short description of your package
+# category:            Web
+
+# To avoid duplicated efforts in documentation and dealing with the
+# complications of embedding Haddock markup inside cabal files, it is
+# common to point users to the README.md file.
+description:         Please see the README on GitHub at <https://github.com/newlandsvalley/abc-header-parser#readme>
+
+dependencies:
+- base >= 4.7 && < 5
+- containers
+- text
+- validation
+- attoparsec
+
+library:
+  source-dirs: src
+
+tests:
+  postgres-test-test:
+    main:                Tests.hs
+    source-dirs:         tests
+    ghc-options:
+    - -threaded
+    - -rtsopts
+    - -with-rtsopts=-N
+    dependencies:
+    - abc-header-parser
+    - hspec
