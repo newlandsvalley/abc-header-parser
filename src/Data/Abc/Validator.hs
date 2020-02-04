@@ -15,10 +15,9 @@ module Data.Abc.Validator
 
 import Data.Validation
 -- import Control.Lens
-import Data.Text (Text, pack, toLower, unpack)
+import Data.Text (Text, pack, unpack)
 import qualified Data.Text as Text (null)
-import Data.Char (toUpper)
-import qualified Data.Char as Char (toLower)
+import Data.Char (toLower, toUpper)
 import qualified Data.Map as Map (fromList, lookup)
 import Data.Maybe (Maybe(..))
 import Data.List (filter, head, reverse, take)
@@ -88,7 +87,6 @@ validateRhythm genre hdrs =
     Just h  ->
       let
         proposedRhythm = unpack h
-        --  proposedRhythm = unpack $ toLower h
       in
         case genre of
           Irish ->
@@ -151,7 +149,7 @@ normaliseRhythm genre proposedRhythm =
 
 specificallyIrishNormalisation :: String -> Maybe Text
 specificallyIrishNormalisation r =
-  case (fmap Char.toLower r) of
+  case (fmap toLower r) of
     "highland" -> Just $ pack $ show Highland
     "mazurka"  -> Just $ pack $ show Mazurka
     "slide"    -> Just $ pack $ show Slide
@@ -167,7 +165,7 @@ specificallyIrish r =
 
 specificallyScottishNormalisation :: String -> Maybe Text
 specificallyScottishNormalisation r =
-  case (fmap Char.toLower r) of
+  case (fmap toLower r) of
     "schottische" -> Just $ pack $ show Schottische
     "strathspey" -> Just $ pack $ show Strathspey
     _ -> Nothing
@@ -182,7 +180,7 @@ specificallyScottish r =
 
 scandiNormalisation :: String -> Maybe Text
 scandiNormalisation r =
-  case (fmap Char.toLower r) of
+  case (fmap toLower r) of
     "brudmarsch"   -> Just $ pack $ show Brudmarsch
     "engelska"     -> Just $ pack $ show Engelska
     "långdans"     -> Just $ pack $ show Långdans
@@ -206,7 +204,7 @@ scandi r =
 
 klezmerNormalisation :: String -> Maybe Text
 klezmerNormalisation r =
-  case (fmap Char.toLower r) of
+  case (fmap toLower r) of
     "bulgar"    -> Just $ pack $ show Bulgar
     "csardas"   -> Just $ pack $ show Csardas
     "doina"     -> Just $ pack $ show Doina
@@ -235,7 +233,7 @@ klezmer r =
 
 generalisedCelticNormalisation :: String -> Maybe Text
 generalisedCelticNormalisation r =
-  case (fmap Char.toLower r) of
+  case (fmap toLower r) of
     "barndance"  -> Just $ pack $ show Barndance
     "barn dance" -> Just $ pack $ show Barndance
     "hornpipe"   -> Just $ pack $ show Hornpipe
@@ -268,7 +266,7 @@ normaliseKeySignature s =
     _ ->
       otherMode (head keySig) (tail keySig)
     where
-      keySig = map (Char.toLower) $ filter ( /= ' ') s
+      keySig = map toLower $ filter ( /= ' ') s
 
 simpleMinorKey :: Char -> Char -> String
 simpleMinorKey c marker =
