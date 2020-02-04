@@ -1,11 +1,12 @@
 {-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Main where
 
 import Data.Abc
 import Data.Genre
 import Data.Abc.Validator (ValidatedHeaders, buildHeaderMap, validateHeaders
-                          , normaliseKeySignature)
+                          , normaliseKeySignature, normaliseRhythm)
 import Data.Abc.Serializer (serializeHeaders)
 import Data.Abc.Parser (abcParse, headersParse)
 import Data.GenreParser (genreParse)
@@ -90,7 +91,7 @@ main = hspec $ do
         result = fromRight (Failure ["Parse fail."]) $
                        second (validateHeadersForGenre Scandi) $
                        headersParse (pack badrhythm)
-      (toEither result) `shouldBe` (Left ["unrecognized rhythm for the Scandi genre: reel."])
+      (toEither result) `shouldBe` (Left ["unrecognized rhythm for the Scandi genre: Reel."])
 
   describe "The key signature normaliser" $ do
     it "normalises simple major keys" $ do
@@ -103,6 +104,20 @@ main = hspec $ do
       (normaliseKeySignature "G DOR") `shouldBe` "GDorian"
     it "leaves other key formats unchanged - albeit capitalised differently" $ do
       (normaliseKeySignature "gFoo") `shouldBe` "Gfoo"
+
+  describe "The rhythm  normaliser" $ do
+    it "normalises a jig" $ do
+      (normaliseRhythm Irish "jig") `shouldBe` "Jig"
+    it "normalises a slip jig" $ do
+      (normaliseRhythm Irish "slip jig") `shouldBe` "Slip Jig"
+    it "normalises a slipjig" $ do
+      (normaliseRhythm Irish "slipjig") `shouldBe` "Slip Jig"
+    it "normalises a polska" $ do
+      (normaliseRhythm Scandi "polska") `shouldBe` "Polska"
+    it "normalises a POLSKA" $ do
+      (normaliseRhythm Scandi "POLSKA") `shouldBe` "Polska"
+    it "leaves other unrecognized rhythms unchanged" $ do
+      (normaliseRhythm Scandi "unknown-rhythm") `shouldBe` "unknown-rhythm"
 
   describe "The serializer" $ do
     it "reconstructs the parsed ABC" $ do

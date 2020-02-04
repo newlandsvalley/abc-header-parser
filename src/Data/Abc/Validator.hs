@@ -9,6 +9,7 @@ module Data.Abc.Validator
   , validateKeySignature
   , validateRhythm
   , normaliseKeySignature
+  , normaliseRhythm
   ,
   ) where
 
@@ -86,11 +87,12 @@ validateRhythm genre hdrs =
   case Map.lookup Rhythm hdrs of
     Just h  ->
       let
-        proposedRhythm = unpack $ toLower h
+        proposedRhythm = unpack h
+        --  proposedRhythm = unpack $ toLower h
       in
         case genre of
           Irish ->
-            case generalisedCeltic proposedRhythm of
+            case generalisedCelticNormalisation proposedRhythm of
               Just rhythm ->
                 Success rhythm
               Nothing ->
@@ -100,67 +102,140 @@ validateRhythm genre hdrs =
           Scandi ->
             scandi proposedRhythm
           Scottish ->
-            case generalisedCeltic proposedRhythm of
+            case generalisedCelticNormalisation proposedRhythm of
               Just rhythm ->
                 Success rhythm
               Nothing ->
                 specificallyScottish proposedRhythm
     Nothing -> Failure  ["No rhythm (R:) present."]
 
+normaliseRhythm :: Genre -> String -> Text
+normaliseRhythm genre proposedRhythm =
+  case genre of
+    Irish ->
+      case generalisedCelticNormalisation proposedRhythm of
+        Just rhythm ->
+          rhythm
+        Nothing ->
+          case specificallyIrishNormalisation proposedRhythm of
+            Just rhythm ->
+              rhythm
+            Nothing ->
+              pack proposedRhythm
+
+    Klezmer ->
+      case klezmerNormalisation proposedRhythm of
+        Just rhythm ->
+          rhythm
+        Nothing ->
+          pack proposedRhythm
+
+    Scandi ->
+      case scandiNormalisation proposedRhythm of
+        Just rhythm ->
+          rhythm
+        Nothing ->
+          pack proposedRhythm
+
+    Scottish ->
+      case generalisedCelticNormalisation proposedRhythm of
+        Just rhythm ->
+          rhythm
+        Nothing ->
+          case specificallyScottishNormalisation proposedRhythm of
+            Just rhythm ->
+              rhythm
+            Nothing ->
+              pack proposedRhythm
+
+
+specificallyIrishNormalisation :: String -> Maybe Text
+specificallyIrishNormalisation r =
+  case (fmap Char.toLower r) of
+    "highland" -> Just $ pack $ show Highland
+    "mazurka"  -> Just $ pack $ show Mazurka
+    "slide"    -> Just $ pack $ show Slide
+    _ -> Nothing
+
 specificallyIrish :: String -> Validation [String] Text
 specificallyIrish r =
-  case r of
-    "highland" -> Success $ pack $ show Highland
-    "mazurka" -> Success $ pack $ show Mazurka
-    "slide"    -> Success $ pack $ show Slide
-    _ -> Failure ["unrecognized rhythm for the Irish genre: " <> r <> "."]
+  case specificallyIrishNormalisation r of
+    Just n ->
+      Success n
+    _ ->
+      Failure ["unrecognized rhythm for the Irish genre: " <> r <> "."]
+
+specificallyScottishNormalisation :: String -> Maybe Text
+specificallyScottishNormalisation r =
+  case (fmap Char.toLower r) of
+    "schottische" -> Just $ pack $ show Schottische
+    "strathspey" -> Just $ pack $ show Strathspey
+    _ -> Nothing
 
 specificallyScottish :: String -> Validation [String] Text
 specificallyScottish r =
-  case r of
-    "schottische" -> Success $ pack $ show Schottische
-    "strathspey" -> Success $ pack $ show Strathspey
-    _ -> Failure ["unrecognized rhythm for the Scottish genre: " <> r <> "."]
+  case specificallyScottishNormalisation r of
+    Just n ->
+      Success n
+    _ ->
+      Failure ["unrecognized rhythm for the Scottish genre: " <> r <> "."]
+
+scandiNormalisation :: String -> Maybe Text
+scandiNormalisation r =
+  case (fmap Char.toLower r) of
+    "brudmarsch"   -> Just $ pack $ show Brudmarsch
+    "engelska"     -> Just $ pack $ show Engelska
+    "långdans"     -> Just $ pack $ show Långdans
+    "marsch"       -> Just $ pack $ show Marsch
+    "polka"        -> Just $ pack $ show Polka
+    "polska"       -> Just $ pack $ show Polska
+    "schottis"     -> Just $ pack $ show Schottis
+    "sekstur"      -> Just $ pack $ show Sekstur
+    "skänklåt"     -> Just $ pack $ show Skänklåt
+    "slängpolska"  -> Just $ pack $ show Slängpolska
+    "waltz"        -> Just $ pack $ show Waltz
+    _ -> Nothing
 
 scandi :: String -> Validation [String] Text
 scandi r =
-  case r of
-    "brudmarsch"   -> Success $ pack $ show Brudmarsch
-    "engelska"     -> Success $ pack $ show Engelska
-    "långdans"     -> Success $ pack $ show Långdans
-    "marsch"       -> Success $ pack $ show Marsch
-    "polka"        -> Success $ pack $ show Polka
-    "polska"       -> Success $ pack $ show Polska
-    "schottis"     -> Success $ pack $ show Schottis
-    "sekstur"      -> Success $ pack $ show Sekstur
-    "skänklåt"     -> Success $ pack $ show Skänklåt
-    "slängpolska"  -> Success $ pack $ show Slängpolska
-    "waltz"        -> Success $ pack $ show Waltz
-    _ -> Failure ["unrecognized rhythm for the Scandi genre: " <> r <> "."]
+  case scandiNormalisation r of
+    Just n ->
+      Success n
+    _ ->
+      Failure ["unrecognized rhythm for the Scandi genre: " <> r <> "."]
+
+klezmerNormalisation :: String -> Maybe Text
+klezmerNormalisation r =
+  case (fmap Char.toLower r) of
+    "bulgar"    -> Just $ pack $ show Bulgar
+    "csardas"   -> Just $ pack $ show Csardas
+    "doina"     -> Just $ pack $ show Doina
+    "freylekhs" -> Just $ pack $ show Freylekhs
+    "khosidl"   -> Just $ pack $ show Khosidl
+    "hora"      -> Just $ pack $ show Hora
+    "honga"     -> Just $ pack $ show Honga
+    "hopak"     -> Just $ pack $ show Hopak
+    "kasatchok" -> Just $ pack $ show Kasatchok
+    "kolomeyke" -> Just $ pack $ show Kolomeyke
+    "sher"      -> Just $ pack $ show Sher
+    "sirba"     -> Just $ pack $ show Sirba
+    "skotshne"  -> Just $ pack $ show Skotshne
+    "taksim"    -> Just $ pack $ show Taksim
+    "terkish"   -> Just $ pack $ show Terkish
+    _ -> Nothing
+
 
 klezmer :: String -> Validation [String] Text
 klezmer r =
-  case r of
-    "bulgar"    -> Success $ pack $ show Bulgar
-    "csardas"   -> Success $ pack $ show Csardas
-    "doina"     -> Success $ pack $ show Doina
-    "freylekhs" -> Success $ pack $ show Freylekhs
-    "khosidl"   -> Success $ pack $ show Khosidl
-    "hora"      -> Success $ pack $ show Hora
-    "honga"     -> Success $ pack $ show Honga
-    "hopak"     -> Success $ pack $ show Hopak
-    "kasatchok" -> Success $ pack $ show Kasatchok
-    "kolomeyke" -> Success $ pack $ show Kolomeyke
-    "sher"      -> Success $ pack $ show Sher
-    "sirba"     -> Success $ pack $ show Sirba
-    "skotshne"  -> Success $ pack $ show Skotshne
-    "taksim"    -> Success $ pack $ show Taksim
-    "terkish"   -> Success $ pack $ show Terkish
-    _ -> Failure ["unrecognized rhythm for the klezmer genre: " <> r <> "."]
+  case klezmerNormalisation r of
+    Just n ->
+      Success n
+    _ ->
+      Failure ["unrecognized rhythm for the klezmer genre: " <> r <> "."]
 
-generalisedCeltic :: String -> Maybe Text
-generalisedCeltic r =
-  case r of
+generalisedCelticNormalisation :: String -> Maybe Text
+generalisedCelticNormalisation r =
+  case (fmap Char.toLower r) of
     "barndance"  -> Just $ pack $ show Barndance
     "barn dance" -> Just $ pack $ show Barndance
     "hornpipe"   -> Just $ pack $ show Hornpipe
