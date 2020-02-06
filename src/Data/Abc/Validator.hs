@@ -1,4 +1,5 @@
 {-# LANGUAGE NamedFieldPuns #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Data.Abc.Validator
   ( ValidatedHeaders(..)
@@ -77,7 +78,7 @@ validateKeySignature hdrs =
        if (Text.null h) then
          Failure  ["Key signatue (K:) is empty."]
        else
-         Success $ pack (normaliseKeySignature (unpack h))
+         Success $ (normaliseKeySignature h)
          -- keySignature (unpack h)
     Nothing -> Failure  ["No key signature (K:) present."]
 
@@ -107,44 +108,44 @@ validateRhythm genre hdrs =
                 specificallyScottish proposedRhythm
     Nothing -> Failure  ["No rhythm (R:) present."]
 
-normaliseRhythm :: Genre -> String -> Text
+normaliseRhythm :: Genre -> Text -> Text
 normaliseRhythm genre proposedRhythm =
   case genre of
     Irish ->
-      case generalisedCelticNormalisation proposedRhythm of
+      case generalisedCelticNormalisation (unpack proposedRhythm) of
         Just rhythm ->
           rhythm
         Nothing ->
-          case specificallyIrishNormalisation proposedRhythm of
+          case specificallyIrishNormalisation (unpack proposedRhythm) of
             Just rhythm ->
               rhythm
             Nothing ->
-              pack proposedRhythm
+              proposedRhythm
 
     Klezmer ->
-      case klezmerNormalisation proposedRhythm of
+      case klezmerNormalisation (unpack proposedRhythm) of
         Just rhythm ->
           rhythm
         Nothing ->
-          pack proposedRhythm
+          proposedRhythm
 
     Scandi ->
-      case scandiNormalisation proposedRhythm of
+      case scandiNormalisation (unpack proposedRhythm) of
         Just rhythm ->
           rhythm
         Nothing ->
-          pack proposedRhythm
+          proposedRhythm
 
     Scottish ->
-      case generalisedCelticNormalisation proposedRhythm of
+      case generalisedCelticNormalisation (unpack proposedRhythm) of
         Just rhythm ->
           rhythm
         Nothing ->
-          case specificallyScottishNormalisation proposedRhythm of
+          case specificallyScottishNormalisation (unpack proposedRhythm) of
             Just rhythm ->
               rhythm
             Nothing ->
-              pack proposedRhythm
+              proposedRhythm
 
 
 specificallyIrishNormalisation :: String -> Maybe Text
@@ -252,7 +253,7 @@ generalisedCelticNormalisation r =
 -- | normalise the form of a key signature in both the saved metadata and
 -- | also in the query.  ABC key signatures in the wild are fairly free format
 -- | and this approach increases the chance of finding matches.
-normaliseKeySignature :: String -> String
+normaliseKeySignature :: Text -> Text
 normaliseKeySignature s =
   case (length keySig) of
     0 ->
@@ -260,13 +261,13 @@ normaliseKeySignature s =
       "unknown"
     1 ->
       -- simple major key
-      (toUpper (head keySig)) : (show Major)
+      pack $ (toUpper (head keySig)) : (show Major)
     2 ->
-      simpleMinorKey (head keySig) (last keySig)
+      pack $ simpleMinorKey (head keySig) (last keySig)
     _ ->
-      otherMode (head keySig) (tail keySig)
+      pack $ otherMode (head keySig) (tail keySig)
     where
-      keySig = map toLower $ filter ( /= ' ') s
+      keySig = map toLower $ filter ( /= ' ') (unpack s)
 
 simpleMinorKey :: Char -> Char -> String
 simpleMinorKey c marker =
